@@ -1,8 +1,8 @@
 {
-  "name": "hubot-irc",
-  "version": "0.2.6",
-  "author": "Fernando Ortiz <fortiz2k@gmail.com>",
-  "description": "IRC adapter for Hubot 2.3",
+  "name": "hubot-irc-slack",
+  "version": "0.1.0",
+  "author": "Lincoln Stoll <lstoll@digitalocean.com>, Fernando Ortiz <fortiz2k@gmail.com>",
+  "description": "Janky adapter for IRC/SLack comms",
   "keywords": "hubot irc adapter",
   "licenses": [
     {
@@ -12,10 +12,10 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git://github.com/nandub/hubot-irc.git"
+    "url": "git://github.com/lstoll/hubot-irc-slack.git"
   },
   "bugs": {
-    "url": "http://github.com/nandub/hubot-irc/issues"
+    "url": "http://github.com/nandub/hubot-irc-slack/issues"
   },
   "main": "./src/irc.coffee",
   "engine": "node > 0.6.0",
