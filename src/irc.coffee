@@ -14,10 +14,22 @@ logger = new Log process.env.HUBOT_LOG_LEVEL or 'info'
 
 class IrcBot extends Adapter
 
-  # TODO - implement send
   send: (envelope, strings...) ->
-    console.log envelope
-    console.log strings
+    @log "Sending message"
+    channel = envelope.reply_to || @channelMapping[envelope.room] || envelope.room
+
+    console.log "channel #{channel}"
+    console.log "target #{@_getTargetFromEnvelope envelope}"
+
+    strings.forEach (str) =>
+      str = @escapeHtml str
+      args = JSON.stringify
+        username   : options.nick
+        channel    : channel
+        text       : str
+        link_names : @options.link_names if @options?.link_names?
+
+      @post "/services/hooks/hubot", args
 
   # TODO - this may be handy for 'secret stuff?'
   # sendPrivate: (envelope, strings...) ->
@@ -112,6 +124,12 @@ class IrcBot extends Adapter
       usessl:   process.env.HUBOT_IRC_USESSL?
       userName: process.env.HUBOT_IRC_USERNAME
 
+      # Slack section
+      token : process.env.HUBOT_SLACK_TOKEN
+      team  : process.env.HUBOT_SLACK_TEAM
+      link_names: process.env.HUBOT_SLACK_LINK_NAMES or 0
+
+
     client_options =
       userName: options.userName
       realName: options.realName
@@ -152,7 +170,6 @@ class IrcBot extends Adapter
         unless message.indexOf(to) == 0
           message = "#{to}: #{message}"
         logger.debug "msg <#{from}> #{message}"
-      console.log "gonna receive"
       self.receive new TextMessage(user, message)
 
     bot.addListener 'error', (message) ->
@@ -229,6 +246,86 @@ class IrcBot extends Adapter
       target = room
 
     target
+
+  ###################################################################
+  # Convenience HTTP Methods for sending data back to slack.
+  ###################################################################
+  _get: (path, callback) ->
+    @_request "GET", path, null, callback
+
+  _post: (path, body, callback) ->
+    @_request "POST", path, body, callback
+
+  _request: (method, path, body, callback) ->
+    self = @
+
+    host = "#{@options.team}.slack.com"
+    headers =
+      Host: host
+
+    path += "?token=#{@options.token}"
+
+    reqOptions =
+      agent    : false
+      hostname : host
+      port     : 443
+      path     : path
+      method   : method
+      headers  : headers
+
+    if method is "POST"
+      body = new Buffer body
+      reqOptions.headers["Content-Type"] = "application/x-www-form-urlencoded"
+      reqOptions.headers["Content-Length"] = body.length
+
+    request = https.request reqOptions, (response) ->
+      data = ""
+      response.on "data", (chunk) ->
+        data += chunk
+
+      response.on "end", ->
+        if response.statusCode >= 400
+          self.logError "Slack services error: #{response.statusCode}"
+          self.logError data
+
+        #console.log "HTTPS response:", data
+        callback? null, data
+
+        response.on "error", (err) ->
+          self.logError "HTTPS response error:", err
+          callback? err, null
+
+    if method is "POST"
+      request.end body, "binary"
+    else
+      request.end()
+
+    request.on "error", (err) ->
+      self.logError "HTTPS request error:", err
+      self.logError err.stack
+      callback? err
+
+  _escapeHtml: (string) ->
+    string
+      # Escape entities
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+
+      # Linkify. We assume that the bot is well-behaved and
+      # consistently sending links with the protocol part
+      .replace(/((\bhttp)\S+)/g, '<$1>')
+
+  _unescapeHtml: (string) ->
+    string
+      # Unescape entities
+      .replace(/&amp;/g, '&')
+      .replace(/&lt;/g, '<')
+      .replace(/&gt;/g, '>')
+
+      # Convert markup into plain url string.
+      .replace(/<((\bhttps?)[^|]+)(\|(.*))+>/g, '$1')
+      .replace(/<((\bhttps?)(.*))?>/g, '$1')
 
 exports.use = (robot) ->
   new IrcBot robot
