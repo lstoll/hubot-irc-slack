@@ -16,7 +16,7 @@ logger = new Log process.env.HUBOT_LOG_LEVEL or 'info'
 class IrcBot extends Adapter
 
   send: (envelope, strings...) ->
-    loger.info "Starting send"
+    logger.info "Starting send"
     destination = envelope.reply_to || envelope.room || envelope.user.reply_to
 
     if destination.match /^#/
