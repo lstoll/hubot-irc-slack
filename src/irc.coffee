@@ -29,13 +29,19 @@ class IrcBot extends Adapter
   sendRoom: (destination, strings...) ->
     strings.forEach (str) =>
       str = @_escapeHtml str
-      args = JSON.stringify
+      data = JSON.stringify
         username   : @options.nick
-        channel    : encodeURIComponent destination
+        channel    : destination
         text       : str
         link_names : @options.link_names if @options?.link_names?
 
-      @_get "/api/chat.postMessage", args
+      robot.http("https://#{@options.team}.slack.com/api/chat.postMessage?token=#{@options.token}")
+        .post(data) (err, res, body) ->
+          if err
+            logger.err err
+          else
+            logger.debug body
+
 
   sendPrivate: (destination, strings...) ->
     for str in strings
