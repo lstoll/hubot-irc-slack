@@ -17,7 +17,7 @@
   "bugs": {
     "url": "http://github.com/nandub/hubot-irc-slack/issues"
   },
-  "main": "./src/irc.coffee",
+  "main": "./src/irc-slack.coffee",
   "engine": "node > 0.6.0",
   "scripts": {
     "test": "grunt"
