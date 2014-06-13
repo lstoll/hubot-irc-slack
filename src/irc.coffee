@@ -209,66 +209,6 @@ class IrcBot extends Adapter
 
     self.emit "connected"
 
-
-  ###################################################################
-  # Convenience HTTP Methods for sending data back to slack.
-  ###################################################################
-  _get: (path, callback) ->
-    @_request "GET", path, null, callback
-
-  _post: (path, body, callback) ->
-    logger.debug "POST called with #{body}"
-    @_request "POST", path, body, callback
-
-  _request: (method, path, body, callback) ->
-    self = @
-
-    host = "#{@options.team}.slack.com"
-    headers =
-      Host: host
-
-    path += "?token=#{@options.token}"
-
-    reqOptions =
-      agent    : false
-      hostname : host
-      port     : 443
-      path     : path
-      method   : method
-      headers  : headers
-
-    if method is "POST"
-      body = new Buffer body
-      reqOptions.headers["Content-Type"] = "application/x-www-form-urlencoded"
-      reqOptions.headers["Content-Length"] = body.length
-
-    request = https.request reqOptions, (response) ->
-      data = ""
-      response.on "data", (chunk) ->
-        data += chunk
-
-      response.on "end", ->
-        if response.statusCode >= 400
-          logger.error "Slack services error: #{response.statusCode}"
-          self.logError data
-
-        console.log "HTTPS response:", data
-        callback? null, data
-
-        response.on "error", (err) ->
-          logger.error "HTTPS response error:", err
-          callback? err, null
-
-    if method is "POST"
-      request.end body, "binary"
-    else
-      request.end()
-
-    request.on "error", (err) ->
-      logger.error "HTTPS request error:", err
-      logger.error err.stack
-      callback? err
-
   _escapeHtml: (string) ->
     string
       # Escape entities
