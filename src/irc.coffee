@@ -29,7 +29,7 @@ class IrcBot extends Adapter
   sendRoom: (destination, strings...) ->
     strings.forEach (str) =>
       str = @_escapeHtml str
-      data = JSON.stringify
+      data = querystring.stringify
         username   : @options.nick
         channel    : destination
         text       : str
@@ -38,7 +38,6 @@ class IrcBot extends Adapter
       console.log data
 
       @robot.http("https://#{@options.team}.slack.com/api/chat.postMessage?token=#{@options.token}")
-        .header('Content-Type', 'application/json')
         .post(data) (err, res, body) ->
           if err
             logger.err err
