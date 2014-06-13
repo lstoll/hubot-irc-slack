@@ -16,39 +16,30 @@ logger = new Log process.env.HUBOT_LOG_LEVEL or 'info'
 class IrcBot extends Adapter
 
   send: (envelope, strings...) ->
+    loger.info "Starting send"
     destination = envelope.reply_to || envelope.room || envelope.user.reply_to
 
     if destination.match /^#/
       # it's a room, send over HTTP
-      @sendRoom envelope, strings...
+      @sendRoom destination, strings...
     else
       # user, send over IRC because API limitation
-      @sendPrivate envelope, strings...
+      @sendPrivate destination, strings...
 
-  sendRoom: (envelope, strings...) ->
-    logger.info "Sending message"
-    # channel = envelope.reply_to || @channelMapping[envelope.room] || envelope.room
-
-    console.log envelope
-
-    channel = envelope.reply_to || envelope.room || envelope.user.reply_to
-
-
+  sendRoom: (destination, strings...) ->
     strings.forEach (str) =>
-      logger.debug "gonna say #{str}"
       str = @_escapeHtml str
       args = JSON.stringify
         username   : @options.nick
-        channel    : channel
+        channel    : destination
         text       : str
         link_names : @options.link_names if @options?.link_names?
 
-      logger.debug "gonna call post with #{str}"
       @_post "/api/chat.postMessage", args
 
-  sendPrivate: (envelope, strings...) ->
+  sendPrivate: (destination, strings...) ->
     for str in strings
-      @bot.say envelope, str
+      @bot.say destination, str
 
   reply: (envelope, strings...) ->
     for str in strings
