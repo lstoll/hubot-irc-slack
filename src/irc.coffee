@@ -16,7 +16,8 @@ class IrcBot extends Adapter
 
   send: (envelope, strings...) ->
     logger.info "Sending message"
-    channel = envelope.reply_to || @channelMapping[envelope.room] || envelope.room
+    # channel = envelope.reply_to || @channelMapping[envelope.room] || envelope.room
+    channel = envelope.reply_to || envelope.room
 
     console.log "channel #{channel}"
     console.log "target #{@_getTargetFromEnvelope envelope}"
