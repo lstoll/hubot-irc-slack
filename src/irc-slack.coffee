@@ -120,6 +120,8 @@ class IrcBot extends Adapter
       debug:    process.env.HUBOT_IRC_DEBUG?
       usessl:   process.env.HUBOT_IRC_USESSL?
       userName: process.env.HUBOT_IRC_USERNAME
+      whitelistRooms: process.env.HUBOT_IRC_WHITELIST_ROOMS
+      blacklistRooms: process.env.HUBOT_IRC_BLACKLIST_ROOMS or ''
 
       # Slack section
       token : process.env.HUBOT_SLACK_TOKEN
@@ -160,6 +162,14 @@ class IrcBot extends Adapter
         return
 
       logger.debug "From #{from} to #{to}: #{message}"
+
+      # Don't say anything if we're blacklisted
+      if to in options.blacklistRooms.split ','
+        return
+
+      # If there's a whitelist, don't say anything unless we're whitelisted
+      if options.whitelistRooms && !(to in options.whitelistRooms.split ',')
+        return
 
       user = self.createUser to, from
       if user.room
