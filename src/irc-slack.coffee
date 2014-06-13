@@ -55,6 +55,9 @@ class IrcBot extends Adapter
     for str in strings
       @send envelope, "#{envelope.user.name}: #{str}"
 
+  paste: (envelope, strings...) ->
+    @send envelope, "```\n#{strings.join("\n")}\n```"
+
   join: (channel) ->
     self = @
     @bot.join channel, () ->
