@@ -31,11 +31,11 @@ class IrcBot extends Adapter
       str = @_escapeHtml str
       args = JSON.stringify
         username   : @options.nick
-        channel    : encodeURIComponent destination
+        channel    : destination
         text       : str
         link_names : @options.link_names if @options?.link_names?
 
-      @_post "/api/chat.postMessage", args
+      @_get "/api/chat.postMessage", args
 
   sendPrivate: (destination, strings...) ->
     for str in strings
