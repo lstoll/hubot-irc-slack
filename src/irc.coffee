@@ -28,7 +28,7 @@ class IrcBot extends Adapter
       logger.debug "gonna say #{str}"
       str = @_escapeHtml str
       args = JSON.stringify
-        username   : options.nick
+        username   : @options.nick
         channel    : channel
         text       : str
         link_names : @options.link_names if @options?.link_names?
