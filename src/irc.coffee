@@ -32,7 +32,7 @@ class IrcBot extends Adapter
         text       : str
         link_names : @options.link_names if @options?.link_names?
 
-      @post "/services/hooks/hubot", args
+      @post "/api/chat.postMessage", args
 
   # TODO - this may be handy for 'secret stuff?'
   # sendPrivate: (envelope, strings...) ->
