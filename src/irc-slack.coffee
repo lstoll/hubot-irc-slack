@@ -166,7 +166,7 @@ class IrcBot extends Adapter
         # this is a private message, let the 'pm' listener handle it
         return
 
-      if from && from.toLowerCase().match ///^#{options.nick.toLowerCase}///
+      if !from || from.toLowerCase().match ///^#{options.nick.toLowerCase}///
         logger.debug "Ignoring message from #{from}, because I think it's coming from me"
         return
 
