@@ -50,10 +50,9 @@ class IrcBot extends Adapter
     for str in strings
       @bot.say target, str
 
-  # TODO - implement reply
-  # reply: (envelope, strings...) ->
-  #   for str in strings
-  #     @send envelope.user, "#{envelope.user.name}: #{str}"
+  reply: (envelope, strings...) ->
+    for str in strings
+      @send envelope, "#{envelope.user.name}: #{str}"
 
   join: (channel) ->
     self = @
