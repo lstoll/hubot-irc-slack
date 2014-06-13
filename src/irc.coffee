@@ -139,6 +139,7 @@ class IrcBot extends Adapter
       team  : process.env.HUBOT_SLACK_TEAM
       link_names: process.env.HUBOT_SLACK_LINK_NAMES or 0
 
+    @options = options
 
     client_options =
       userName: options.userName
