@@ -8,6 +8,9 @@ class IrcResponse extends Response
   sendPrivate: (strings...) ->
     @robot.adapter.sendPrivate @envelope, strings...
 
+  paste: (strings...) ->
+    @robot.adapter.paste @envelope, strings...
+
 # Irc library
 Irc = require 'irc'
 
