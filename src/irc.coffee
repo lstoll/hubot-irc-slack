@@ -241,14 +241,14 @@ class IrcBot extends Adapter
 
       response.on "end", ->
         if response.statusCode >= 400
-          self.logError "Slack services error: #{response.statusCode}"
+          logger.error "Slack services error: #{response.statusCode}"
           self.logError data
 
         #console.log "HTTPS response:", data
         callback? null, data
 
         response.on "error", (err) ->
-          self.logError "HTTPS response error:", err
+          logger.error "HTTPS response error:", err
           callback? err, null
 
     if method is "POST"
@@ -257,8 +257,8 @@ class IrcBot extends Adapter
       request.end()
 
     request.on "error", (err) ->
-      self.logError "HTTPS request error:", err
-      self.logError err.stack
+      logger.error "HTTPS request error:", err
+      logger.error err.stack
       callback? err
 
   _escapeHtml: (string) ->
