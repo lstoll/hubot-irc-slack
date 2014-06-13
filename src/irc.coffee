@@ -26,7 +26,7 @@ class IrcBot extends Adapter
 
     strings.forEach (str) =>
       logger.debug "gonna say #{str}"
-      str = @escapeHtml str
+      str = @_escapeHtml str
       args = JSON.stringify
         username   : options.nick
         channel    : channel
