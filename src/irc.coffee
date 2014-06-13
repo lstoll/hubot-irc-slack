@@ -48,7 +48,7 @@ class IrcBot extends Adapter
 
   sendPrivate: (envelope, strings...) ->
     for str in strings
-      @bot.say target, str
+      @bot.say envelope, str
 
   reply: (envelope, strings...) ->
     for str in strings
