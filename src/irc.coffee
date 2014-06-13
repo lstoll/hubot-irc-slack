@@ -35,7 +35,7 @@ class IrcBot extends Adapter
         text       : str
         link_names : @options.link_names if @options?.link_names?
 
-      robot.http("https://#{@options.team}.slack.com/api/chat.postMessage?token=#{@options.token}")
+      @robot.http("https://#{@options.team}.slack.com/api/chat.postMessage?token=#{@options.token}")
         .post(data) (err, res, body) ->
           if err
             logger.err err
