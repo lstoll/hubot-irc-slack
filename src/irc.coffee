@@ -32,7 +32,7 @@ class IrcBot extends Adapter
       data = JSON.stringify
         username   : @options.nick
         # channel    : destination
-        # text       : str
+        text       : str
         link_names : @options.link_names if @options?.link_names?
 
       console.log data
