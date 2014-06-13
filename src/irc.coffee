@@ -31,13 +31,13 @@ class IrcBot extends Adapter
       str = @_escapeHtml str
       data = JSON.stringify
         username   : @options.nick
-        # channel    : destination
+        channel    : destination
         text       : str
         link_names : @options.link_names if @options?.link_names?
 
       console.log data
 
-      @robot.http("https://#{@options.team}.slack.com/api/chat.postMessage?token=#{@options.token}&channel=#{encodeURIComponent destination}")
+      @robot.http("https://#{@options.team}.slack.com/api/chat.postMessage?token=#{@options.token}")
         .header('Content-Type', 'application/json')
         .post(data) (err, res, body) ->
           if err
