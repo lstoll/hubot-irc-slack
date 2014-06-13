@@ -39,6 +39,7 @@ class IrcBot extends Adapter
       console.log data
 
       @robot.http("https://#{@options.team}.slack.com/api/chat.postMessage?token=#{@options.token}")
+        .header("Content-Type", "application/x-www-form-urlencoded")
         .post(data) (err, res, body) ->
           if err
             logger.err err
