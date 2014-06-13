@@ -25,6 +25,7 @@ class IrcBot extends Adapter
     console.log "target #{@_getTargetFromEnvelope envelope}"
 
     strings.forEach (str) =>
+      logger.debug "gonna say #{str}"
       str = @escapeHtml str
       args = JSON.stringify
         username   : options.nick
@@ -32,6 +33,7 @@ class IrcBot extends Adapter
         text       : str
         link_names : @options.link_names if @options?.link_names?
 
+      logger.debug "gonna call post with #{str}"
       @_post "/api/chat.postMessage", args
 
   # TODO - this may be handy for 'secret stuff?'
@@ -257,6 +259,7 @@ class IrcBot extends Adapter
     @_request "GET", path, null, callback
 
   _post: (path, body, callback) ->
+    logger.debug "POST called with #{body}"
     @_request "POST", path, body, callback
 
   _request: (method, path, body, callback) ->
