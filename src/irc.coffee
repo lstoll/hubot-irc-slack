@@ -31,7 +31,7 @@ class IrcBot extends Adapter
       str = @_escapeHtml str
       args = JSON.stringify
         username   : @options.nick
-        channel    : destination
+        channel    : encodeURIComponent destination
         text       : str
         link_names : @options.link_names if @options?.link_names?
 
