@@ -15,7 +15,7 @@ logger = new Log process.env.HUBOT_LOG_LEVEL or 'info'
 class IrcBot extends Adapter
 
   send: (envelope, strings...) ->
-    @log "Sending message"
+    logger.info "Sending message"
     channel = envelope.reply_to || @channelMapping[envelope.room] || envelope.room
 
     console.log "channel #{channel}"
