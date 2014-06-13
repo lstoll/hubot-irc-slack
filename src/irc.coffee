@@ -244,7 +244,7 @@ class IrcBot extends Adapter
           logger.error "Slack services error: #{response.statusCode}"
           self.logError data
 
-        #console.log "HTTPS response:", data
+        console.log "HTTPS response:", data
         callback? null, data
 
         response.on "error", (err) ->
