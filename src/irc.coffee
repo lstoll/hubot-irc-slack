@@ -19,6 +19,8 @@ class IrcBot extends Adapter
     # channel = envelope.reply_to || @channelMapping[envelope.room] || envelope.room
     channel = envelope.reply_to || envelope.room
 
+    channel = 'opsbot-dev'
+
     console.log "channel #{channel}"
     console.log "target #{@_getTargetFromEnvelope envelope}"
 
