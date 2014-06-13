@@ -16,15 +16,22 @@ logger = new Log process.env.HUBOT_LOG_LEVEL or 'info'
 class IrcBot extends Adapter
 
   send: (envelope, strings...) ->
+    destination = envelope.reply_to || envelope.room || envelope.user.reply_to
+
+    if destination.match /^#/
+      # it's a room, send over HTTP
+      sendRoom envelope, strings...
+    else
+      # user, send over IRC because API limitation
+      sendPrivate envelope, strings...
+
+  sendRoom: (envelope, strings...) ->
     logger.info "Sending message"
     # channel = envelope.reply_to || @channelMapping[envelope.room] || envelope.room
 
     console.log envelope
 
-    channel = envelope.reply_to || envelope.room
-
-    console.log "channel #{channel}"
-    console.log "target #{@_getTargetFromEnvelope envelope}"
+    channel = envelope.reply_to || envelope.room || envelope.user.reply_to
 
 
     strings.forEach (str) =>
@@ -39,29 +46,9 @@ class IrcBot extends Adapter
       logger.debug "gonna call post with #{str}"
       @_post "/api/chat.postMessage", args
 
-
-  # TODO - this may be handy for 'secret stuff?'
-  # sendPrivate: (envelope, strings...) ->
-  #   # Remove the room from the envelope and send as private message to user
-  #
-  #   if envelope.room
-  #     delete envelope.room
-  #
-  #   if envelope.user?.room
-  #     delete envelope.user.room
-  #
-  #   @send envelope, strings...
-  # send: (envelope, strings...) ->
-  #   # Use @notice if SEND_NOTICE_MODE is set
-  #   return @notice envelope, strings if process.env.HUBOT_IRC_SEND_NOTICE_MODE?
-  #
-  #   target = @_getTargetFromEnvelope envelope
-  #
-  #   unless target
-  #     return logger.error "ERROR: Not sure who to send to. envelope=", envelope
-  #
-  #   for str in strings
-  #     @bot.say target, str
+  sendPrivate: (envelope, strings...) ->
+    for str in strings
+      @bot.say target, str
 
   # TODO - implement reply
   # reply: (envelope, strings...) ->
@@ -224,38 +211,6 @@ class IrcBot extends Adapter
 
     self.emit "connected"
 
-  _getTargetFromEnvelope: (envelope) ->
-    user = null
-    room = null
-    target = null
-
-    # as of hubot 2.4.2, the first param to send() is an object with 'user'
-    # and 'room' data inside. detect the old style here.
-    if envelope.reply_to
-      user = envelope
-    else
-      # expand envelope
-      user = envelope.user
-      room = envelope.room
-
-    if user
-      # most common case - we're replying to a user in a room
-      if user.room
-        target = user.room
-      # reply directly
-      else if user.name
-        target = user.name
-      # replying to pm
-      else if user.reply_to
-        target = user.reply_to
-      # allows user to be an id string
-      else if user.search?(/@/) != -1
-        target = user
-    else if room
-      # this will happen if someone uses robot.messageRoom(jid, ...)
-      target = room
-
-    target
 
   ###################################################################
   # Convenience HTTP Methods for sending data back to slack.
