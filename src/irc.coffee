@@ -24,21 +24,18 @@ class IrcBot extends Adapter
     console.log "channel #{channel}"
     console.log "target #{@_getTargetFromEnvelope envelope}"
 
-    try
 
-      strings.forEach (str) =>
-        logger.debug "gonna say #{str}"
-        str = @_escapeHtml str
-        args = JSON.stringify
-          username   : @options.nick
-          channel    : channel
-          text       : str
-          link_names : @options.link_names if @options?.link_names?
+    strings.forEach (str) =>
+      logger.debug "gonna say #{str}"
+      str = @_escapeHtml str
+      args = JSON.stringify
+        username   : @options.nick
+        channel    : channel
+        text       : str
+        link_names : @options.link_names if @options?.link_names?
 
-        logger.debug "gonna call post with #{str}"
-        @_post "/api/chat.postMessage", args
-    catch e
-      console.log e
+      logger.debug "gonna call post with #{str}"
+      @_post "/api/chat.postMessage", args
 
 
   # TODO - this may be handy for 'secret stuff?'
