@@ -1,6 +1,7 @@
 # Hubot dependencies
 {Robot, Adapter, TextMessage, EnterMessage, LeaveMessage, Response} = require 'hubot'
 https = require 'https'
+querystring = require 'querystring'
 
 # Custom Response class that adds a sendPrivate method
 class IrcResponse extends Response
