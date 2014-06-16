@@ -188,6 +188,10 @@ class IrcBot extends Adapter
         unless message.indexOf(to) == 0
           message = "#{to}: #{message}"
         logger.debug "msg <#{from}> #{message}"
+
+      # Slack likes to reformat email addresses, string that out.
+      message = message.replace /mailto:[^\s@]*@[^\s@]*\|([^\s@]*@[^\s@]*)/, (match, p1) -> p1
+
       self.receive new TextMessage(user, message)
 
     bot.addListener 'error', (message) ->
