@@ -279,7 +279,8 @@ class IrcBot extends Adapter
         else
           chans = JSON.parse(body)
           channel = (item for item in chans.channels when item.name == name)
-          channel[0].name
+          console.log channel
+          channel[0].id
 
 
 
