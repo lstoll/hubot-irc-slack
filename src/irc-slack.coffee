@@ -67,7 +67,7 @@ class IrcBot extends Adapter
           content  : str
           filetype : 'txt'
 
-        console.log data
+        console.log envelope
 
         @robot.http("https://#{@options.team}.slack.com/api/files.upload?token=#{@options.token}")
           .header("Content-Type", "application/x-www-form-urlencoded")
