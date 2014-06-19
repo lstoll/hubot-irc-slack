@@ -60,21 +60,22 @@ class IrcBot extends Adapter
 
   paste: (envelope, strings...) ->
     destination = envelope.reply_to || envelope.room || envelope.user.reply_to
-    strings.forEach (str) =>
-      data = querystring.stringify
-        channels : @_channelId(destination)
-        content  : str
-        filetype : 'txt'
+    @_channelId(destination) (chanId) ->
+      strings.forEach (str) =>
+        data = querystring.stringify
+          channels : chanId
+          content  : str
+          filetype : 'txt'
 
-      console.log data
+        console.log data
 
-      @robot.http("https://#{@options.team}.slack.com/api/files.upload?token=#{@options.token}")
-        .header("Content-Type", "application/x-www-form-urlencoded")
-        .post(data) (err, res, body) ->
-          if err
-            logger.err err
-          else
-            logger.debug body
+        @robot.http("https://#{@options.team}.slack.com/api/files.upload?token=#{@options.token}")
+          .header("Content-Type", "application/x-www-form-urlencoded")
+          .post(data) (err, res, body) ->
+            if err
+              logger.err err
+            else
+              logger.debug body
 
   join: (channel) ->
     self = @
@@ -273,7 +274,7 @@ class IrcBot extends Adapter
       .replace(/<((\bhttps?)[^|]+)(\|(.*))+>/g, '$1')
       .replace(/<((\bhttps?)(.*))?>/g, '$1')
 
-  _channelId: (name) ->
+  _channelId: (name, cb) ->
     @robot.http("https://#{@options.team}.slack.com/api/channels.list?token=#{@options.token}")
       .get() (err, res, body) ->
         if err
@@ -281,7 +282,7 @@ class IrcBot extends Adapter
         else
           chans = JSON.parse(body)
           channel = (item for item in chans.channels when item.name == name.replace("#", ""))
-          channel[0].id
+          cb(channel[0].id)
 
 
 
