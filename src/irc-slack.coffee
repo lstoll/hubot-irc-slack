@@ -66,6 +66,8 @@ class IrcBot extends Adapter
         content  : str
         filetype : 'txt'
 
+      console.log data
+
       @robot.http("https://#{@options.team}.slack.com/api/files.upload?token=#{@options.token}")
         .header("Content-Type", "application/x-www-form-urlencoded")
         .post(data) (err, res, body) ->
@@ -278,9 +280,7 @@ class IrcBot extends Adapter
           logger.err err
         else
           chans = JSON.parse(body)
-          console.log chans
           channel = (item for item in chans.channels when item.name == name.replace("#", ""))
-          console.log channel
           channel[0].id
 
 
