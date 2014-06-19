@@ -59,7 +59,20 @@ class IrcBot extends Adapter
       @send envelope, "#{envelope.user.name}: #{str}"
 
   paste: (envelope, strings...) ->
-    @send envelope, "```\n#{strings.join("\n")}\n```"
+    destination = envelope.reply_to || envelope.room || envelope.user.reply_to
+    strings.forEach (str) =>
+      data = querystring.stringify
+        channels : destination
+        content  : str
+        filetype : 'txt'
+
+      @robot.http("https://#{@options.team}.slack.com/api/files.upload?token=#{@options.token}")
+        .header("Content-Type", "application/x-www-form-urlencoded")
+        .post(data) (err, res, body) ->
+          if err
+            logger.err err
+          else
+            logger.debug body
 
   join: (channel) ->
     self = @
