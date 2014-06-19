@@ -60,7 +60,7 @@ class IrcBot extends Adapter
 
   paste: (envelope, strings...) ->
     destination = envelope.reply_to || envelope.room || envelope.user.reply_to
-    @_channelId destination, (chanId) ->
+    @_channelId destination, (chanId) =>
       strings.forEach (str) =>
         data = querystring.stringify
           channels : chanId
