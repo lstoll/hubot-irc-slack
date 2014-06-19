@@ -35,7 +35,7 @@ class IrcBot extends Adapter
       str = @_escapeHtml str
       data = querystring.stringify
         username   : @options.nick
-        channel    : @_channelId(destination)
+        channel    : destination
         text       : str
         link_names : @options.link_names if @options?.link_names?
 
@@ -62,7 +62,7 @@ class IrcBot extends Adapter
     destination = envelope.reply_to || envelope.room || envelope.user.reply_to
     strings.forEach (str) =>
       data = querystring.stringify
-        channels : destination
+        channels : @_channelId(destination)
         content  : str
         filetype : 'txt'
 
