@@ -35,7 +35,7 @@ class IrcBot extends Adapter
       str = @_escapeHtml str
       data = querystring.stringify
         username   : @options.nick
-        channel    : destination
+        channel    : @_channelId(destination)
         text       : str
         link_names : @options.link_names if @options?.link_names?
 
@@ -270,6 +270,18 @@ class IrcBot extends Adapter
       # Convert markup into plain url string.
       .replace(/<((\bhttps?)[^|]+)(\|(.*))+>/g, '$1')
       .replace(/<((\bhttps?)(.*))?>/g, '$1')
+
+  _channelId: (name) ->
+    @robot.http("https://#{@options.team}.slack.com/api/channels.list?token=#{@options.token}")
+      .get() (err, res, body) ->
+        if err
+          logger.err err
+        else
+          chans = JSON.parse(body)
+          channel = (item for item in chans.channels when item.name == name)
+          channel[0]
+
+
 
 exports.use = (robot) ->
   new IrcBot robot
