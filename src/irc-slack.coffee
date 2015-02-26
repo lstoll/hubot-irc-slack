@@ -2,6 +2,7 @@
 {Robot, Adapter, TextMessage, EnterMessage, LeaveMessage, Response} = require 'hubot'
 https = require 'https'
 querystring = require 'querystring'
+FormData = require 'form-data'
 
 # Custom Response class that adds a sendPrivate m
 class IrcResponse extends Response
@@ -10,6 +11,9 @@ class IrcResponse extends Response
 
   paste: (strings...) ->
     @robot.adapter.paste @envelope, strings...
+
+  upload: (filename, buf) ->
+    @robot.adapter.upload @envelope, filename, buf
 
 # Irc library
 Irc = require 'irc'
@@ -76,6 +80,18 @@ class IrcBot extends Adapter
               logger.err err
             else
               logger.debug body
+
+  upload: (envelope, filename, buf) ->
+    destination = envelope.reply_to || envelope.room || envelope.user.reply_to
+    @_channelId destination, (chanId) =>
+      form = new FormData()
+      form.append("token", @options.token)
+      form.append("channels", chanId)
+      form.append("file", buf, filename: filename)
+
+      form.submit "https://#{@options.team}.slack.com/api/files.upload", (err, res) ->
+        logger.err err if err
+        res.resume()
 
   join: (channel) ->
     self = @

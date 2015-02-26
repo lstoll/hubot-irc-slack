@@ -24,6 +24,7 @@
   },
   "dependencies": {
     "irc": "git+https://github.com/nandub/node-irc.git",
+    "form-data": "0.1.4",
     "log": "1.4.0"
   },
   "devDependencies": {
