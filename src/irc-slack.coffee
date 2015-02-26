@@ -42,7 +42,7 @@ class IrcBot extends Adapter
         channel    : destination
         text       : str
         link_names : @options.link_names if @options?.link_names?
-        icon_url:  : http://cdn.lstoll.net/screen/hubot.png
+        icon_url  : "http://cdn.lstoll.net/screen/hubot.png"
 
       console.log data
 
